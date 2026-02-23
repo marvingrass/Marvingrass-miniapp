@@ -1,62 +1,272 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Marvingrass Exchange</title>
 
-# Укажите ваш токен, полученный от BotFather
-BOT_TOKEN = "ВАШ_ТОКЕН_БОТА"
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-# Укажите ID вашего Telegram-чата (можно сначала отправить сообщение боту и узнать ID через API)
-ADMIN_CHAT_ID = "ВАШ_ID_ТЕЛЕГРАМА"
+<style>
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
-# Функция для обработки команды /start
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        "Здравствуйте! Добро пожаловать в наш обменный пункт.\n"
-        "Пожалуйста, отправьте запрос на обмен валюты в формате:\n"
-        "USD 100 на EUR\n"
-        "Или нажмите /help для получения инструкций."
-    )
+body {
+    background: black;
+    color:white;
+    overflow:hidden;
+}
 
-# Функция для обработки сообщения с заявкой
-def process_request(update: Update, context: CallbackContext):
-    # Получение текста сообщения от пользователя
-    user_message = update.message.text
+/* 🔥 АНИМИРОВАННЫЙ ФОН */
+.bg {
+    position: fixed;
+    width:100%;
+    height:100%;
+    background: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3l5d2RrZ2Z1c2U1b3VxNjN4d3F5eHF5Z3Q3cG1tN2N6d2JqYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l0HlBO7eyXzSZkJri/giphy.gif') center/cover;
+    filter: blur(18px) brightness(0.35);
+    transform: scale(1.2);
+}
 
-    # Отправляем текст сообщения администратору
-    context.bot.send_message(
-        chat_id=ADMIN_CHAT_ID,
-        text=f"Новая заявка на обмен от @{update.message.from_user.username or update.message.from_user.first_name}:\n{user_message}"
-    )
+/* КОНТЕЙНЕР */
+.container {
+    position: relative;
+    z-index: 2;
+    max-width: 420px;
+    margin:auto;
+    padding:20px;
+}
 
-    # Отправляем подтверждающее сообщение пользователю
-    update.message.reply_text("Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!")
+/* КАРТОЧКА */
+.card {
+    margin-top:40px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(25px);
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 10px 60px rgba(0,0,0,0.6);
+    animation: slideUp 0.5s ease;
+}
 
-# Функция для обработки команды /help
-def help_command(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        "Отправьте сообщение в формате:\n"
-        "USD 100 на EUR\n"
-        "Мы свяжемся с вами для дальнейших инструкций."
-    )
+h1 {
+    text-align:center;
+    font-size:22px;
+}
 
-def main():
-    # Создаем объект Updater и передаем ему токен
-    updater = Updater(BOT_TOKEN, use_context=True)
+.subtitle {
+    text-align:center;
+    color:#94a3b8;
+    font-size:13px;
+    margin:5px 0 20px;
+}
 
-    # Получаем ссылку на диспетчер, чтобы добавить обработчики
-    dispatcher = updater.dispatcher
+/* ПЕРЕКЛЮЧАТЕЛЬ */
+.switch {
+    display:flex;
+    background:#020617;
+    border-radius:14px;
+    padding:6px;
+    margin-bottom:20px;
+}
 
-    # Обработчики команд
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
+.switch button {
+    flex:1;
+    border:none;
+    background:none;
+    color:#64748b;
+    padding:12px;
+    font-size:15px;
+    border-radius:12px;
+    transition:0.25s;
+}
 
-    # Обработчик текстовых сообщений (заявок)
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, process_request))
+.switch .active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color:white;
+    box-shadow: 0 0 25px rgba(59,130,246,0.5);
+}
 
-    # Запуск бота
-    updater.start_polling()
-    print("Бот запущен и работает...")
-    updater.idle()
+.label {
+    font-size:13px;
+    color:#94a3b8;
+    margin-bottom:6px;
+}
 
+input, select {
+    width:100%;
+    padding:15px;
+    border-radius:14px;
+    border:none;
+    margin-bottom:14px;
+    font-size:16px;
+    background:#020617;
+    color:white;
+}
 
-if __name__ == "__main__":
-    main()
+/* БЛОК КУРСА */
+.rateBox {
+    background: rgba(2,6,23,0.8);
+    border-radius:16px;
+    padding:16px;
+    text-align:center;
+    margin-bottom:16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.rate {
+    font-size:18px;
+    font-weight:bold;
+    color:#22c55e;
+    margin-top:5px;
+}
+
+/* КНОПКА */
+.submit {
+    width:100%;
+    padding:17px;
+    border:none;
+    border-radius:16px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+.submit:active {
+    transform: scale(0.96);
+}
+
+.footer {
+    text-align:center;
+    margin-top:18px;
+    font-size:12px;
+    color:#475569;
+}
+
+@keyframes slideUp {
+    from { opacity:0; transform: translateY(20px); }
+    to { opacity:1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity:0; }
+    to { opacity:1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="container">
+    <div class="card">
+
+        <h1>Marvingrass Exchange</h1>
+        <div class="subtitle">Обмен валют • USDT • RUB • KZT</div>
+
+        <div class="switch">
+            <button id="buyBtn" class="active" onclick="setType('buy')">Купить</button>
+            <button id="sellBtn" onclick="setType('sell')">Продать</button>
+        </div>
+
+        <div class="label">Сумма</div>
+        <input id="amount" type="number" placeholder="Введите сумму" oninput="calculate()">
+
+        <div class="label">Отдаёте</div>
+        <select id="from" onchange="calculate()">
+            <option value="RUB">RUB</option>
+            <option value="KZT">KZT</option>
+            <option value="USDT">USDT</option>
+        </select>
+
+        <div class="label">Получаете</div>
+        <select id="to" onchange="calculate()">
+            <option value="USDT">USDT</option>
+            <option value="RUB">RUB</option>
+            <option value="KZT">KZT</option>
+        </select>
+
+        <div class="rateBox">
+            <div>Ориентировочный расчёт</div>
+            <div class="rate" id="rate">—</div>
+        </div>
+
+        <button class="submit" onclick="sendRequest()">Создать заявку</button>
+
+        <div class="footer">
+            Оператор подтвердит курс вручную
+        </div>
+
+    </div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+let type = "buy";
+
+/* 🔥 ТВОИ КУРСЫ */
+const rates = {
+    RUB_USDT: 120,
+    KZT_USDT: 525,
+    USDT_RUB: 118,
+    USDT_KZT: 520
+};
+
+function setType(t) {
+    type = t;
+    document.getElementById("buyBtn").classList.remove("active");
+    document.getElementById("sellBtn").classList.remove("active");
+
+    if(t === "buy") document.getElementById("buyBtn").classList.add("active");
+    else document.getElementById("sellBtn").classList.add("active");
+
+    calculate();
+}
+
+function calculate() {
+    const amount = document.getElementById("amount").value;
+    const from = document.getElementById("from").value;
+    const to = document.getElementById("to").value;
+
+    if(!amount) {
+        document.getElementById("rate").innerText = "—";
+        return;
+    }
+
+    let result = 0;
+
+    if(from === "RUB" && to === "USDT") result = amount / rates.RUB_USDT;
+    else if(from === "KZT" && to === "USDT") result = amount / rates.KZT_USDT;
+    else if(from === "USDT" && to === "RUB") result = amount * rates.USDT_RUB;
+    else if(from === "USDT" && to === "KZT") result = amount * rates.USDT_KZT;
+    else result = amount;
+
+    document.getElementById("rate").innerText =
+        result.toFixed(2) + " " + to;
+}
+
+function sendRequest() {
+    const amount = document.getElementById("amount").value;
+    const from = document.getElementById("from").value;
+    const to = document.getElementById("to").value;
+
+    if(!amount) {
+        alert("Введите сумму");
+        return;
+    }
+
+    const data = { type, amount, from, to };
+
+    tg.sendData(JSON.stringify(data));
+    alert("✅ Заявка улетела оператору");
+}
+</script>
+
+</body>
+</html>
